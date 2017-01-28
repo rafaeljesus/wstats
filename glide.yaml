@@ -1,0 +1,4 @@
+package: github.com/rafaeljesus/wstats
+import:
+- package: github.com/Sirupsen/logrus
+  version: v0.11.0
