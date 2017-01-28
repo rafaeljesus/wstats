@@ -2,6 +2,7 @@ package store
 
 import (
 	"errors"
+	"sort"
 	"sync"
 )
 
@@ -12,6 +13,8 @@ type Repo interface {
 	IncLmap(key string, n int) (int, error)
 	Getw(key string) (Memkv, error)
 	Getl(key string) (Memkv, error)
+	SortedByWords() ([]string, int)
+	SortedByLetters() []string
 	Count() int
 }
 
@@ -83,6 +86,38 @@ func (s *Store) Getl(key string) (Memkv, error) {
 	}
 
 	return v, nil
+}
+
+func (s *Store) SortedByWords() ([]string, int) {
+	ws := new(Sort)
+	count := 0
+	ws.mkv = s.Wmap
+	ws.sorted = make([]string, len(s.Wmap))
+	i := 0
+	for key, _ := range s.Wmap {
+		count += s.Wmap[key].Value
+		ws.sorted[i] = key
+		i++
+	}
+
+	sort.Sort(ws)
+
+	return ws.sorted, count
+}
+
+func (s *Store) SortedByLetters() []string {
+	ws := new(Sort)
+	ws.mkv = s.Lmap
+	ws.sorted = make([]string, len(s.Lmap))
+	i := 0
+	for key, _ := range s.Lmap {
+		ws.sorted[i] = key
+		i++
+	}
+
+	sort.Sort(ws)
+
+	return ws.sorted
 }
 
 func (s *Store) Count() int {
