@@ -29,6 +29,7 @@ func main() {
 	go net.ListenAndServeTCP(":"+*tcpPort, env.ReceiveChannel)
 
 	mux.HandleFunc("/v1/healthz", env.Healthz)
+	mux.HandleFunc("/v1/stats", env.StatsIndex)
 
 	log.WithField("http_port", httpPort).Info("starting http server")
 	http.ListenAndServe(":"+*httpPort, env)
