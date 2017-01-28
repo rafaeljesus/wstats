@@ -30,6 +30,28 @@ func TestIncLmap(t *testing.T) {
 	}
 }
 
+func TestGetm(t *testing.T) {
+	s := NewStore()
+	n, err := s.IncWmap("key", 1)
+	if err != nil || n != 1 {
+		t.Errorf("Expected to increment word map", err)
+	}
+
+	_, err = s.Getw("not_exist")
+	if err == nil {
+		t.Errorf("Expected to not get a not existing word", err)
+	}
+
+	kv, err := s.Getw("key")
+	if err != nil {
+		t.Errorf("Expected get word", err)
+	}
+
+	if kv.Value != 1 {
+		t.Errorf("Expected kv value to be 1 got %s", kv.Value)
+	}
+}
+
 func TestCount(t *testing.T) {
 	s := NewStore()
 	_, _ = s.IncWmap("key", 1)

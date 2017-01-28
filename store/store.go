@@ -1,12 +1,16 @@
 package store
 
 import (
+	"errors"
 	"sync"
 )
+
+var ErrKeyNotExist = errors.New("key does not exist")
 
 type Repo interface {
 	IncWmap(key string, n int) (int, error)
 	IncLmap(key string, n int) (int, error)
+	Getw(key string) (Memkv, error)
 	Count() int
 }
 
@@ -54,6 +58,18 @@ func (s *Store) IncLmap(key string, n int) (int, error) {
 
 	s.Lmap[key] = Memkv{key, nv}
 	return nv, nil
+}
+
+func (s *Store) Getw(key string) (Memkv, error) {
+	s.Lock()
+	defer s.Unlock()
+
+	v, found := s.Wmap[key]
+	if !found {
+		return v, ErrKeyNotExist
+	}
+
+	return v, nil
 }
 
 func (s *Store) Count() int {
