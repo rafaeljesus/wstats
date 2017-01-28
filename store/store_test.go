@@ -52,6 +52,28 @@ func TestGetm(t *testing.T) {
 	}
 }
 
+func TestGetl(t *testing.T) {
+	s := NewStore()
+	n, err := s.IncLmap("a", 1)
+	if err != nil || n != 1 {
+		t.Errorf("Expected to increment letter map", err)
+	}
+
+	_, err = s.Getl("z")
+	if err == nil {
+		t.Errorf("Expected to not get a not existing letter", err)
+	}
+
+	kv, err := s.Getl("a")
+	if err != nil {
+		t.Errorf("Expected get letter", err)
+	}
+
+	if kv.Value != 1 {
+		t.Errorf("Expected kv value to be 1 got %s", kv.Value)
+	}
+}
+
 func TestCount(t *testing.T) {
 	s := NewStore()
 	_, _ = s.IncWmap("key", 1)

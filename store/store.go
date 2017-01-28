@@ -11,6 +11,7 @@ type Repo interface {
 	IncWmap(key string, n int) (int, error)
 	IncLmap(key string, n int) (int, error)
 	Getw(key string) (Memkv, error)
+	Getl(key string) (Memkv, error)
 	Count() int
 }
 
@@ -65,6 +66,18 @@ func (s *Store) Getw(key string) (Memkv, error) {
 	defer s.Unlock()
 
 	v, found := s.Wmap[key]
+	if !found {
+		return v, ErrKeyNotExist
+	}
+
+	return v, nil
+}
+
+func (s *Store) Getl(key string) (Memkv, error) {
+	s.Lock()
+	defer s.Unlock()
+
+	v, found := s.Lmap[key]
 	if !found {
 		return v, ErrKeyNotExist
 	}
