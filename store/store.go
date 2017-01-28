@@ -98,7 +98,6 @@ func (s *Store) SortedByWords() ([]string, int) {
 	ws.sorted = make([]string, len(s.Wmap))
 	i := 0
 	for key, _ := range s.Wmap {
-		s.Lock()
 		count += s.Wmap[key].Value
 		ws.sorted[i] = key
 		i++
