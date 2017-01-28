@@ -1,10 +1,40 @@
 package handlers
 
 import (
+	"encoding/json"
 	log "github.com/Sirupsen/logrus"
+	"net/http"
 	"regexp"
 	"strings"
 )
+
+func (e *Env) StatsIndex(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	topWords, count := e.Repo.SortedByWords()
+	topLetters := e.Repo.SortedByLetters()
+	wsize := len(topWords)
+	lsize := len(topLetters)
+	wlimit := 5
+	llimit := 5
+
+	if wsize < 5 {
+		wlimit = wsize
+	}
+
+	if lsize < 5 {
+		llimit = lsize
+	}
+
+	response := map[string]interface{}{
+		"count":      count,
+		"total":      e.Repo.Count(),
+		"topWords":   topWords[:wlimit],
+		"topLetters": topLetters[:llimit],
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+}
 
 func (e *Env) StatsCreate(payload string) {
 	r, _ := regexp.Compile("\\W")
