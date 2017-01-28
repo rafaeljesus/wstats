@@ -2,16 +2,26 @@ package handlers
 
 import (
 	log "github.com/Sirupsen/logrus"
+	"regexp"
+	"strings"
 )
 
-func (e *Env) StatsCreate(text string) {
-	_, err := e.Repo.IncWmap(text, 1)
-	if err != nil {
-		log.WithError(err).Fatal("[Handlers] Failed to create stats")
+func (e *Env) StatsCreate(payload string) {
+	r, _ := regexp.Compile("\\W")
+	words := strings.Fields(r.ReplaceAllString(payload, " "))
+
+	for _, w := range words {
+		w = strings.ToLower(w)
+		_, err := e.Repo.IncWmap(w, 1)
+		if err != nil {
+			log.WithError(err).Fatal("[Handlers] Failed to create stats")
+		}
+
+		log.WithField("word", w).Info("[Handlers] Word stored")
 	}
 
 	log.WithFields(log.Fields{
-		"text":        text,
+		"text":        payload,
 		"store_count": e.Repo.Count(),
-	}).Info("[Handlers] Successfully create stats")
+	}).Info("[Handlers] Words successfully proccessed")
 }
