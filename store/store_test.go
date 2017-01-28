@@ -34,7 +34,7 @@ func TestCount(t *testing.T) {
 	s := NewStore()
 	_, _ = s.IncWmap("key", 1)
 	_, _ = s.IncLmap("key", 1)
-	if s.Count != 2 {
-		t.Errorf("Expected 2 equal total count ", s.Count)
+	if s.Count() != 2 {
+		t.Errorf("Expected 2 equal total count ", s.Count())
 	}
 }

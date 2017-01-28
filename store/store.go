@@ -7,14 +7,14 @@ import (
 type Repo interface {
 	IncWmap(key string, n int) (int, error)
 	IncLmap(key string, n int) (int, error)
-	TotalCount() int
+	Count() int
 }
 
 type Store struct {
 	sync.RWMutex
-	Count int
-	Wmap  map[string]Memkv
-	Lmap  map[string]Memkv
+	TotalCount int
+	Wmap       map[string]Memkv
+	Lmap       map[string]Memkv
 }
 
 func NewStore() *Store {
@@ -34,7 +34,7 @@ func (s *Store) IncWmap(key string, n int) (int, error) {
 	}
 
 	nv := v.Value + n
-	s.Count++
+	s.TotalCount++
 
 	s.Wmap[key] = Memkv{key, nv}
 	return nv, nil
@@ -50,12 +50,12 @@ func (s *Store) IncLmap(key string, n int) (int, error) {
 	}
 
 	nv := v.Value + n
-	s.Count++
+	s.TotalCount++
 
 	s.Lmap[key] = Memkv{key, nv}
 	return nv, nil
 }
 
-func (s *Store) TotalCount() int {
-	return s.Count
+func (s *Store) Count() int {
+	return s.TotalCount
 }

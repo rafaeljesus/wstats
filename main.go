@@ -23,6 +23,8 @@ func main() {
 
 	env := handlers.NewEnv(store, mux)
 
+	go startWorker(env)
+
 	log.WithField("tcp_port", tcpPort).Info("starting tcp server")
 	go net.ListenAndServeTCP(":"+*tcpPort, env.ReceiveChannel)
 
@@ -30,4 +32,14 @@ func main() {
 
 	log.WithField("http_port", httpPort).Info("starting http server")
 	http.ListenAndServe(":"+*httpPort, env)
+}
+
+func startWorker(e *handlers.Env) {
+	defer close(e.ReceiveChannel)
+	for {
+		select {
+		case payload := <-e.ReceiveChannel:
+			e.StatsCreate(payload)
+		}
+	}
 }

@@ -11,5 +11,4 @@ func (e *Env) Healthz(w http.ResponseWriter, r *http.Request) {
 
 	response := map[string]bool{"status": true}
 	json.NewEncoder(w).Encode(response)
-
 }
