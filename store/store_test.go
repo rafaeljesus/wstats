@@ -74,6 +74,58 @@ func TestGetl(t *testing.T) {
 	}
 }
 
+func TestSortByWords(t *testing.T) {
+	s := NewStore()
+	_, err := s.IncWmap("foo", 1)
+	if err != nil {
+		t.Errorf("Expected to increment word map", err)
+	}
+
+	_, err = s.IncWmap("foo", 1)
+	if err != nil {
+		t.Errorf("Expected to increment word map", err)
+	}
+
+	_, err = s.IncWmap("bar", 1)
+	if err != nil {
+		t.Errorf("Expected to increment word map", err)
+	}
+
+	sorted, count := s.SortedByWords()
+
+	if sorted[0] != "foo" && sorted[1] != "bar" {
+		t.Errorf("Expected sort to ordered by top words%s", sorted)
+	}
+
+	if count != 3 {
+		t.Errorf("Expected count value to be %s", count)
+	}
+}
+
+func TestSortByLetters(t *testing.T) {
+	s := NewStore()
+	_, err := s.IncLmap("foo", 1)
+	if err != nil {
+		t.Errorf("Expected to increment letter map", err)
+	}
+
+	_, err = s.IncLmap("foo", 1)
+	if err != nil {
+		t.Errorf("Expected to increment letter map", err)
+	}
+
+	_, err = s.IncLmap("bar", 1)
+	if err != nil {
+		t.Errorf("Expected to increment letter map", err)
+	}
+
+	sorted := s.SortedByLetters()
+
+	if sorted[0] != "foo" && sorted[1] != "bar" {
+		t.Errorf("Expected sort to ordered by top letters%s", sorted)
+	}
+}
+
 func TestCount(t *testing.T) {
 	s := NewStore()
 	_, _ = s.IncWmap("key", 1)
