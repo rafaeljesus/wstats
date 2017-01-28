@@ -25,15 +25,17 @@ func (e *Env) StatsIndex(w http.ResponseWriter, r *http.Request) {
 		llimit = lsize
 	}
 
-	response := map[string]interface{}{
-		"count":      count,
-		"total":      e.Repo.Count(),
-		"topWords":   topWords[:wlimit],
-		"topLetters": topLetters[:llimit],
+	response := statsReponse{
+		Count:      count,
+		Total:      e.Repo.Count(),
+		TopWords:   topWords[:wlimit],
+		TopLetters: topLetters[:llimit],
 	}
 
+	log.Info(response)
+
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
+	json.NewEncoder(w).Encode(&response)
 }
 
 func (e *Env) StatsCreate(payload string) {
@@ -64,4 +66,11 @@ func (e *Env) StatsCreate(payload string) {
 		"text":        payload,
 		"store_count": e.Repo.Count(),
 	}).Info("[Handlers] Words successfully proccessed")
+}
+
+type statsReponse struct {
+	Count      int      `json:"count"`
+	Total      int      `json:"total"`
+	TopWords   []string `json:"top_words"`
+	TopLetters []string `json:"top_letters"`
 }
