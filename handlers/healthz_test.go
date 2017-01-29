@@ -21,13 +21,13 @@ func TestHealthzIndex(t *testing.T) {
 	mux.HandleFunc("/v1/healthz", env.Healthz)
 	mux.ServeHTTP(res, req)
 
-	response := make(map[string]bool)
+	response := make(map[string]string)
 	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
 		t.Errorf("Expected to decode response json %s", err)
 	}
 
-	if !response["status"] {
-		t.Errorf("Expected status to equal %s", strconv.FormatBool(response["status"]))
+	if response["status"] != "up" {
+		t.Errorf("Expected status to equal %s", response["status"])
 	}
 
 	if res.Code != http.StatusOK {
