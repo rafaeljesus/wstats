@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
 )
 
 func (e *Env) StatsIndex(w http.ResponseWriter, r *http.Request) {
@@ -35,6 +36,8 @@ func (e *Env) StatsIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *Env) StatsCreate(payload string) {
+	reqStart := time.Now()
+
 	r, _ := regexp.Compile("\\W")
 	words := strings.Fields(r.ReplaceAllString(payload, " "))
 
@@ -58,9 +61,12 @@ func (e *Env) StatsCreate(payload string) {
 		}
 	}
 
+	reqEnd := time.Now()
+
 	log.WithFields(log.Fields{
 		"text":        payload,
 		"store_count": e.Repo.Count(),
+		"timing":      reqEnd.Sub(reqStart),
 	}).Info("[Handlers] Words successfully processed")
 }
 
