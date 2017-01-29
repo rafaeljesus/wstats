@@ -28,12 +28,12 @@ func main() {
 	dispatcher := worker.NewDispatcher(numcpu)
 	dispatcher.Run(task)
 
-	log.WithField("tcp_port", tcpPort).Info("starting tcp server")
+	log.WithField("tcp_port", *tcpPort).Info("starting tcp server")
 	go net.ListenAndServeTCP(":"+*tcpPort, worker.RequestQueue)
 
 	mux.HandleFunc("/v1/healthz", env.Healthz)
 	mux.HandleFunc("/v1/stats", env.StatsIndex)
 
-	log.WithField("http_port", httpPort).Info("starting http server")
+	log.WithField("http_port", *httpPort).Info("starting http server")
 	http.ListenAndServe(":"+*httpPort, env)
 }
