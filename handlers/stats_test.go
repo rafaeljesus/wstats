@@ -8,6 +8,45 @@ import (
 	"testing"
 )
 
+func TestStatsIndex(t *testing.T) {
+	store := store.NewStore()
+	env := NewEnv(store, nil)
+
+	payload := "lorem input, input, tok;"
+	env.StatsCreate(payload)
+
+	res := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/v1/stats", nil)
+	if err != nil {
+		t.Errorf("Expected initialize request %s", err)
+	}
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/v1/stats", env.StatsIndex)
+	mux.ServeHTTP(res, req)
+
+	response := &statsReponse{}
+	if err := json.NewDecoder(res.Body).Decode(response); err != nil {
+		t.Errorf("Expected to decode stats response json %s", err)
+	}
+
+	if response.Count != 4 {
+		t.Errorf("Expected count to be eq %s", response.Count)
+	}
+
+	if response.Total != 4 {
+		t.Errorf("Expected total count to be q %s", response.Total)
+	}
+
+	if response.TopWords[0] != "input" || response.TopWords[4] != "lorem" {
+		t.Errorf("Expected top words to be ordered%s", response.TopWords)
+	}
+
+	if response.TopLetters[0] != "t" || response.TopLetters[4] != "i" {
+		t.Errorf("Expected top letters to be ordered%s", response.TopLetters)
+	}
+}
+
 func TestStatsCreate(t *testing.T) {
 	store := store.NewStore()
 	env := NewEnv(store, nil)
@@ -40,36 +79,5 @@ func TestStatsCreate(t *testing.T) {
 
 	if kv.Value != 3 {
 		t.Errorf("Expected kv value to be 3 got %s", kv.Value)
-	}
-}
-
-func TestStatsIndex(t *testing.T) {
-	store := store.NewStore()
-	env := NewEnv(store, nil)
-
-	payload := "lorem input, input, tok;"
-	env.StatsCreate(payload)
-
-	res := httptest.NewRecorder()
-	req, err := http.NewRequest("GET", "/v1/stats", nil)
-	if err != nil {
-		t.Errorf("Expected initialize request %s", err)
-	}
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/v1/stats", env.StatsIndex)
-	mux.ServeHTTP(res, req)
-
-	response := &statsReponse{}
-	if err := json.NewDecoder(res.Body).Decode(response); err != nil {
-		t.Errorf("Expected to decode stats response json %s", err)
-	}
-
-	if response.Count != 4 {
-		t.Errorf("Expected status to equal %s", response.Count)
-	}
-
-	if res.Code != http.StatusOK {
-		t.Error("Expected status %s to be equal %s", res.Code, http.StatusOK)
 	}
 }
