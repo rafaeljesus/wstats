@@ -32,8 +32,6 @@ func (e *Env) StatsIndex(w http.ResponseWriter, r *http.Request) {
 		TopLetters: topLetters[:llimit],
 	}
 
-	log.Info(response)
-
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&response)
 }

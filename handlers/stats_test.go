@@ -34,15 +34,15 @@ func TestStatsIndex(t *testing.T) {
 		t.Errorf("Expected count to be eq %s", response.Count)
 	}
 
-	if response.Total != 4 {
+	if response.Total != 22 {
 		t.Errorf("Expected total count to be q %s", response.Total)
 	}
 
-	if response.TopWords[0] != "input" || response.TopWords[4] != "lorem" {
+	if response.TopWords[0] != "input" {
 		t.Errorf("Expected top words to be ordered%s", response.TopWords)
 	}
 
-	if response.TopLetters[0] != "t" || response.TopLetters[4] != "i" {
+	if response.TopLetters[0] != "t" {
 		t.Errorf("Expected top letters to be ordered%s", response.TopLetters)
 	}
 }
