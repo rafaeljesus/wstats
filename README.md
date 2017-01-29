@@ -1,29 +1,46 @@
-When started, it will listen on port 5555 (but this may be configurable through a command-line flag).
+## Wstats
 
-Clients will be able to connect to this port and send arbitrary natural language over the wire.
+* Natural language TCP server.
+* A minimal docker container.
+* Automatically pushes it to dockerhub if circlec build pass.
 
-The purpose of the application is to process the text, and store some stats about the different words that it sees.
+## Setup
 
-The application will also expose an HTTP interface on port 8080 (configurable):
+Installation
 
-clients hitting the /stats endpoint will receive a JSON representation of the statistics about the words that the application has seen so far.
-
-Specifically, the JSON response should look like:
-
-```js
-{
-  "count": 42,
-  "top_5_words": ["lorem", "ipsum", "dolor", "sit", "amet"],
-  "top_5_letters": ["e", "t", "a", "o", "i"]
-}
+```sh
+mkdir -p $GOPATH/src/github.com/rafaeljesus
+cd $GOPATH/src/github.com/rafaeljesus
+git clone https://github.com/rafaeljesus/wstats.git
+cd wstats
+glide install
+sh build && sh build-container
+docker run -it -t -p 80:8080 --name wstats rafaeljesus/wstats
 ```
 
-Where count represents the total number of words seen, top_5_words contains the 5 words that have been seen with the highest frequency,
-and top_5_letters contains the 5 letters that have been seen with the highest frequency (you may choose to transform all letters to lowercase if you so wish).
+Running Tests
+```sh
+go test $(go list ./... | grep -v /vendor/)
+```
 
-A few things to look out for:
+## API
+See [docs](./docs/README.md)
 
-* The number of words to process may be large, although you may safely assume that they will fit within main memory.
-* The application should support a high degree of concurrency, whereby many clients would be sending text at the same time.
-* While we only expect three metrics over the collection of words, you should assume that a more fully-fledged version of the application would be collecting many more of these.
-* We would like to see your approach to automated testing for this type of Go program.
+## Contributing
+- Fork it
+- Create your feature branch (`git checkout -b my-new-feature`)
+- Commit your changes (`git commit -am 'Add some feature'`)
+- Push to the branch (`git push origin my-new-feature`)
+- Create new Pull Request
+
+## Badges
+
+[![Build Status](https://circleci.com/gh/rafaeljesus/wstats.svg?style=svg)](https://circleci.com/gh/rafaeljesus/wstats)
+[![Go Report Card](https://goreportcard.com/badge/github.com/rafaeljesus/wstats)](https://goreportcard.com/report/github.com/rafaeljesus/wstats)
+[![](https://images.microbadger.com/badges/image/rafaeljesus/wstats.svg)](https://microbadger.com/images/rafaeljesus/wstats "Get your own image badge on microbadger.com")
+
+---
+
+> GitHub [@rafaeljesus](https://github.com/rafaeljesus) &nbsp;&middot;&nbsp;
+> Medium [@_jesus_rafael](https://medium.com/@_jesus_rafael) &nbsp;&middot;&nbsp;
+> Twitter [@_jesus_rafael](https://twitter.com/_jesus_rafael)

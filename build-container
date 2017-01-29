@@ -1,0 +1,2 @@
+GOOS=linux bash build
+docker build -t rafaeljesus/wstats .
