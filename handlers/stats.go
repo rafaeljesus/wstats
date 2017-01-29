@@ -10,12 +10,10 @@ import (
 
 func (e *Env) StatsIndex(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	topWords, count := e.Repo.SortedByWords()
-	topLetters := e.Repo.SortedByLetters()
-	wsize := len(topWords)
-	lsize := len(topLetters)
-	wlimit := 5
-	llimit := 5
+	topWords, count := e.Repo.SortByWords()
+	topLetters := e.Repo.SortByLetters()
+	wsize, lsize := len(topWords), len(topLetters)
+	wlimit, llimit := 5, 5
 
 	if wsize < 5 {
 		wlimit = wsize
@@ -63,7 +61,7 @@ func (e *Env) StatsCreate(payload string) {
 	log.WithFields(log.Fields{
 		"text":        payload,
 		"store_count": e.Repo.Count(),
-	}).Info("[Handlers] Words successfully proccessed")
+	}).Info("[Handlers] Words successfully processed")
 }
 
 type statsReponse struct {

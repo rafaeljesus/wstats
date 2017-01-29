@@ -5,7 +5,7 @@ type Repo interface {
 	IncLmap(key string, n int) (int, error)
 	Getw(key string) (Memkv, error)
 	Getl(key string) (Memkv, error)
-	SortedByWords() ([]string, int)
-	SortedByLetters() []string
+	SortByWords() ([]string, int)
+	SortByLetters() []string
 	Count() int
 }

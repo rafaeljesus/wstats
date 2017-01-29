@@ -5,6 +5,7 @@ import (
 	"github.com/rafaeljesus/wstats/store"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 )
 
@@ -31,11 +32,11 @@ func TestStatsIndex(t *testing.T) {
 	}
 
 	if response.Count != 4 {
-		t.Errorf("Expected count to be eq %s", response.Count)
+		t.Errorf("Expected count to be eq %s", strconv.Itoa(response.Count))
 	}
 
 	if response.Total != 22 {
-		t.Errorf("Expected total count to be q %s", response.Total)
+		t.Errorf("Expected total count to be q %s", strconv.Itoa(response.Total))
 	}
 
 	if response.TopWords[0] != "input" {
@@ -55,29 +56,29 @@ func TestStatsCreate(t *testing.T) {
 	env.StatsCreate(payload)
 
 	if store.Count() != 22 {
-		t.Errorf("Expected score count to be %s", store.Count())
+		t.Errorf("Expected score count to be %s", strconv.Itoa(store.Count()))
 	}
 
 	kv, err := store.Getw("lorem")
 	if err != nil {
-		t.Errorf("Expected get \"lorem\" word", err)
+		t.Errorf("Expected get \"lorem\" word %s", err)
 	}
 
 	kv, err = store.Getw("input")
 	if err != nil {
-		t.Errorf("Expected get \"input\" word", err)
+		t.Errorf("Expected get \"input\" word %s", err)
 	}
 
 	if kv.Value != 2 {
-		t.Errorf("Expected kv value to be 2 got %s", kv.Value)
+		t.Errorf("Expected kv value to be 2 got %s", strconv.Itoa(kv.Value))
 	}
 
 	kv, err = store.Getl("t")
 	if err != nil {
-		t.Errorf("Expected get \"t\" letter", err)
+		t.Errorf("Expected get \"t\" letter %s", err)
 	}
 
 	if kv.Value != 3 {
-		t.Errorf("Expected kv value to be 3 got %s", kv.Value)
+		t.Errorf("Expected kv value to be 3 got %s", strconv.Itoa(kv.Value))
 	}
 }

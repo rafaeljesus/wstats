@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 )
 
@@ -26,10 +27,10 @@ func TestHealthzIndex(t *testing.T) {
 	}
 
 	if !response["status"] {
-		t.Errorf("Expected status to equal %s", response["status"])
+		t.Errorf("Expected status to equal %s", strconv.FormatBool(response["status"]))
 	}
 
 	if res.Code != http.StatusOK {
-		t.Error("Expected status %s to be equal %s", res.Code, http.StatusOK)
+		t.Error("Expected status %s to be equal %s", strconv.Itoa(res.Code), http.StatusOK)
 	}
 }

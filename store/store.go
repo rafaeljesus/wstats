@@ -78,42 +78,39 @@ func (s *Store) Getl(key string) (Memkv, error) {
 	return v, nil
 }
 
-func (s *Store) SortedByWords() ([]string, int) {
+func (s *Store) SortByWords() ([]string, int) {
 	s.Lock()
 	defer s.Unlock()
 
-	ws := new(Sort)
+	sm := new(SortMap)
 	count := 0
-	ws.mkv = s.Wmap
-	ws.sorted = make([]string, len(s.Wmap))
+	sm.mkv = s.Wmap
+	sm.sorted = make([]string, len(s.Wmap))
 	i := 0
-	for key, _ := range s.Wmap {
+	for key := range s.Wmap {
 		count += s.Wmap[key].Value
-		ws.sorted[i] = key
+		sm.sorted[i] = key
 		i++
 	}
 
-	sort.Sort(ws)
+	sort.Sort(sm)
 
-	return ws.sorted, count
+	return sm.sorted, count
 }
 
-func (s *Store) SortedByLetters() []string {
-	s.Lock()
-	defer s.Unlock()
-
-	ws := new(Sort)
-	ws.mkv = s.Lmap
-	ws.sorted = make([]string, len(s.Lmap))
+func (s *Store) SortByLetters() []string {
+	sm := new(SortMap)
+	sm.mkv = s.Lmap
+	sm.sorted = make([]string, len(s.Lmap))
 	i := 0
-	for key, _ := range s.Lmap {
-		ws.sorted[i] = key
+	for key := range s.Lmap {
+		sm.sorted[i] = key
 		i++
 	}
 
-	sort.Sort(ws)
+	sort.Sort(sm)
 
-	return ws.sorted
+	return sm.sorted
 }
 
 func (s *Store) Count() int {
