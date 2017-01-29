@@ -22,6 +22,8 @@ Running Tests
 go test $(go list ./... | grep -v /vendor/)
 ```
 
+## Usage
+
 Runing tcp server
 ```sh
 ./wstats
