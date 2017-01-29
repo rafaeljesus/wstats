@@ -6,16 +6,14 @@ import (
 )
 
 type Env struct {
-	Mux            *http.ServeMux
-	ReceiveChannel chan string
-	Repo           store.Repo
+	Mux  *http.ServeMux
+	Repo store.Repo
 }
 
 func NewEnv(repo store.Repo, mux *http.ServeMux) *Env {
 	return &Env{
-		Mux:            mux,
-		Repo:           repo,
-		ReceiveChannel: make(chan string),
+		Mux:  mux,
+		Repo: repo,
 	}
 }
 

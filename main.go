@@ -6,6 +6,7 @@ import (
 	"github.com/rafaeljesus/wstats/handlers"
 	"github.com/rafaeljesus/wstats/net"
 	"github.com/rafaeljesus/wstats/store"
+	"github.com/rafaeljesus/wstats/worker"
 	"net/http"
 	"runtime"
 )
@@ -22,25 +23,17 @@ func main() {
 	mux := http.NewServeMux()
 
 	env := handlers.NewEnv(store, mux)
+	task := env.StatsCreate
 
-	go startWorker(env)
+	dispatcher := worker.NewDispatcher(numcpu)
+	dispatcher.Run(task)
 
 	log.WithField("tcp_port", tcpPort).Info("starting tcp server")
-	go net.ListenAndServeTCP(":"+*tcpPort, env.ReceiveChannel)
+	go net.ListenAndServeTCP(":"+*tcpPort, worker.RequestQueue)
 
 	mux.HandleFunc("/v1/healthz", env.Healthz)
 	mux.HandleFunc("/v1/stats", env.StatsIndex)
 
 	log.WithField("http_port", httpPort).Info("starting http server")
 	http.ListenAndServe(":"+*httpPort, env)
-}
-
-func startWorker(e *handlers.Env) {
-	defer close(e.ReceiveChannel)
-	for {
-		select {
-		case payload := <-e.ReceiveChannel:
-			e.StatsCreate(payload)
-		}
-	}
 }

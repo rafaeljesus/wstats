@@ -1,11 +1,12 @@
 package net
 
 import (
+	"github.com/rafaeljesus/wstats/worker"
 	"io/ioutil"
 	"net"
 )
 
-func ListenAndServeTCP(port string, rc chan string) {
+func ListenAndServeTCP(port string, rq chan worker.Request) {
 	l, err := net.Listen("tcp", port)
 	if err != nil {
 		panic(err)
@@ -18,11 +19,11 @@ func ListenAndServeTCP(port string, rc chan string) {
 			panic(err)
 		}
 
-		go handleConnection(conn, rc)
+		go handleConnection(conn, rq)
 	}
 }
 
-func handleConnection(conn net.Conn, rc chan string) {
+func handleConnection(conn net.Conn, rq chan worker.Request) {
 	defer conn.Close()
 	buf, err := ioutil.ReadAll(conn)
 	if err != nil {
@@ -30,6 +31,7 @@ func handleConnection(conn net.Conn, rc chan string) {
 		return
 	}
 
-	rc <- string(buf)
+	request := worker.Request{Payload: string(buf)}
+	rq <- request
 	conn.Write([]byte("HTTP/1.0 Status 200 OK\r\n\r\n"))
 }
